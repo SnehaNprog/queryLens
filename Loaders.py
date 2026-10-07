@@ -73,3 +73,11 @@ def webloader(url):
             metadata={"source": url, "title": title, "type": "web"},
         )
     ]
+
+
+
+if __name__ == "__main__":
+    docs = pdfloader("data/sample.pdf")
+    print(len(docs), "pages")           # how many items are in the list
+    print(docs[0].page_content[:100])   # first item, first 100 characters
+
