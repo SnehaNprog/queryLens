@@ -1,7 +1,10 @@
+import re
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
 from LLM import get_llm
+import re
 
 
 SYSTEM_PROMPT = """You are a multilingual question-answering assistant.
@@ -71,3 +74,60 @@ def answer(question, retriever, llm=None, k=5):
             "question": question,
         }
     )
+
+
+
+def build_sources(results):
+    """Turn retrieval results into numbered source dictionaries."""
+    sources = []
+
+    for i, (chunk, score) in enumerate(results, start=1):
+        sources.append({
+            "id": i,
+            "source": chunk.metadata.get("source"),
+            "page": chunk.metadata.get("page"),
+            "text": chunk.page_content,
+        })
+
+    return sources
+
+
+def extract_citations(text):
+    """Return sorted unique passage numbers cited in the answer."""
+    citations = re.findall(r"\[(\d+)\]", text)
+    return sorted(set(int(citation) for citation in citations))
+
+
+def answer_with_sources(question, retriever, llm=None, k=5):
+    """Return the answer, retrieved sources, and cited passage numbers."""
+    results = retriever.search(question, k=k)
+
+    context = (
+        format_context(results)
+        if results
+        else "(no passages found)"
+    )
+
+    chain = build_chain(llm)
+
+    answer_text = chain.invoke({
+        "context": context,
+        "question": question,
+    })
+
+    return {
+        "answer": answer_text,
+        "sources": build_sources(results),
+        "cited": extract_citations(answer_text),
+    }
+
+
+def answer(question, retriever, llm=None, k=5):
+    """Return only the generated answer."""
+    return answer_with_sources(
+        question,
+        retriever,
+        llm=llm,
+        k=k,
+    )["answer"]
+
