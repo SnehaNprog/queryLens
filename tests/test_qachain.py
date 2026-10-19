@@ -8,6 +8,7 @@ from QAChain import (
     build_sources,
     extract_citations,
     answer_with_sources,
+    stream_answer,
 )
 
 
@@ -182,3 +183,127 @@ def test_answer_with_sources_when_nothing_found():
     assert len(seen) == 1
 
 
+def make_streaming_llm(pieces):
+    def fake(prompt_value):
+        for piece in pieces:
+            yield piece
+
+    return RunnableLambda(fake)
+
+
+
+def test_stream_answer_event_order():
+    llm = make_streaming_llm([
+        "Paris ",
+        "is the ",
+        "capital [1].",
+    ])
+
+    retriever = FakeRetriever([
+        (
+            Document(
+                "Paris is the capital of France.",
+                {"source": "geo.pdf", "page": 1}
+            ),
+            0.9,
+        )
+    ])
+
+    events = list(stream_answer("q?", retriever, llm=llm))
+
+    kinds = [kind for kind, _ in events]
+
+    assert kinds == [
+        "sources",
+        "token",
+        "token",
+        "token",
+        "done",
+    ]
+
+
+def test_stream_answer_tokens_join_to_full_answer():
+    llm = make_streaming_llm([
+        "Paris ",
+        "is the ",
+        "capital [1].",
+    ])
+
+    retriever = FakeRetriever([
+        (
+            Document(
+                "Paris is the capital of France.",
+                {"source": "geo.pdf", "page": 1}
+            ),
+            0.9,
+        )
+    ])
+
+    events = list(stream_answer("q?", retriever, llm=llm))
+
+    tokens = [
+        payload
+        for kind, payload in events
+        if kind == "token"
+    ]
+
+    done = events[-1][1]
+
+    assert "".join(tokens) == done["answer"]
+    assert done["cited"] == [1]
+
+
+def test_stream_answer_sources_come_first():
+    llm = make_streaming_llm(["Paris [1]."])
+
+    retriever = FakeRetriever([
+        (
+            Document(
+                "Paris is the capital of France.",
+                {"source": "geo.pdf", "page": 1}
+            ),
+            0.9,
+        )
+    ])
+
+    events = list(stream_answer("q?", retriever, llm=llm))
+
+    assert events[0][0] == "sources"
+    assert events[0][1][0]["source"] == "geo.pdf"
+
+
+def test_stream_answer_is_lazy():
+    calls = []
+
+    def fake(prompt_value):
+        calls.append(prompt_value.to_string())
+        yield "Paris [1]."
+
+    llm = RunnableLambda(fake)
+
+    retriever = FakeRetriever([
+        (
+            Document(
+                "Paris is the capital of France.",
+                {"source": "geo.pdf", "page": 1}
+            ),
+            0.9,
+        )
+    ])
+
+    stream = stream_answer("q?", retriever, llm=llm)
+
+    # Nothing executes when the generator is created.
+    assert calls == []
+
+    # First iteration retrieves and yields sources.
+    first_event = next(stream)
+
+    assert first_event[0] == "sources"
+    assert calls == []
+
+    # The LLM has not run until iteration continues.
+    second_event = next(stream)
+
+    assert second_event == ("token", "Paris [1].")
+    assert len(calls) == 1

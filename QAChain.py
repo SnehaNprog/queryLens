@@ -131,3 +131,38 @@ def answer(question, retriever, llm=None, k=5):
         k=k,
     )["answer"]
 
+
+def stream_answer(question, retriever, llm=None, k=5):
+    """Stream answer events: sources, tokens, then done."""
+    results = retriever.search(question, k=k)
+
+    context = (
+        format_context(results)
+        if results
+        else "(no passages found)"
+    )
+
+    # Send sources before generating the answer.
+    yield ("sources", build_sources(results))
+
+    pieces = []
+
+    chain = build_chain(llm)
+
+    for piece in chain.stream({
+        "context": context,
+        "question": question,
+    }):
+        pieces.append(piece)
+        yield ("token", piece)
+
+    full_text = "".join(pieces)
+
+    yield (
+        "done",
+        {
+            "answer": full_text,
+            "cited": extract_citations(full_text),
+        },
+    )
+
