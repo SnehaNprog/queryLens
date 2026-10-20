@@ -86,3 +86,78 @@ def test_search_on_empty_retriever_returns_empty_list():
     results = retriever.search("anything")
 
     assert results == []
+
+
+
+def test_sources_lists_loaded_sources():
+    retriever = build_retriever()
+
+    assert retriever.sources() == [
+        "bio.pdf",
+        "food.pdf",
+        "news.pdf",
+    ]
+
+    assert Retriever().sources() == []
+
+
+def test_adding_same_source_twice_is_skipped():
+    retriever = build_retriever()
+
+    n = len(retriever.vector_store.chunks)
+
+    added = retriever.add(DOCS)
+
+    assert added == 0
+    assert len(retriever.vector_store.chunks) == n
+    assert len(retriever.bm25_index.chunks) == n
+
+
+def test_chunk_ids_are_unique_across_add_calls():
+    retriever = Retriever()
+
+    retriever.add(DOCS[:1])
+    retriever.add(DOCS[1:])
+
+    ids = [
+        chunk.metadata["chunk"]
+        for chunk in retriever.vector_store.chunks
+    ]
+
+    assert len(set(ids)) == len(ids)
+
+
+def test_add_returns_number_of_chunks_added():
+    retriever = Retriever()
+
+    added = retriever.add(DOCS)
+
+    assert added == len(retriever.vector_store.chunks)
+    assert added > 0
+
+
+def test_chunk_numbering_continues_after_load(tmp_path):
+    retriever = build_retriever()
+
+    folder = tmp_path / "idx"
+    retriever.save(str(folder))
+
+    loaded = Retriever.load(str(folder))
+
+    new_doc = Document(
+        "Mars is red.",
+        {"source": "space.pdf", "page": 1}
+    )
+
+    added = loaded.add([new_doc])
+
+    assert added > 0
+
+    ids = [
+        chunk.metadata["chunk"]
+        for chunk in loaded.vector_store.chunks
+    ]
+
+    assert len(set(ids)) == len(ids)
+    assert "space.pdf" in loaded.sources()
+

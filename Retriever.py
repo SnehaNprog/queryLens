@@ -17,13 +17,47 @@ class Retriever:
         self.overlap = overlap
         self.vector_store = VectorStore()
         self.bm25_index = BM25Index()
+        self.next_chunk_id = 0
+
+
+    def sources(self):
+        """Sorted list of distinct sources currently loaded."""
+        return sorted({
+            chunk.metadata["source"]
+            for chunk in self.vector_store.chunks
+        })
 
     def add(self, docs):
-        """Chunk the documents and add the chunks to BOTH indexes."""
-        chunks = chunk_documents(docs, self.chunk_size, self.overlap)
+        """Add new sources to both indexes. Skip already-loaded sources.
+
+        Returns the number of chunks added.
+        """
+        # Snapshot existing sources BEFORE filtering.
+        known = set(self.sources())
+
+        docs = [
+            doc for doc in docs
+            if doc.metadata["source"] not in known
+        ]
+
+        if not docs:
+            return 0
+
+        chunks = chunk_documents(
+            docs,
+            self.chunk_size,
+            self.overlap
+        )
+
+        # Assign globally unique chunk IDs.
+        for chunk in chunks:
+            chunk.metadata["chunk"] = self.next_chunk_id
+            self.next_chunk_id += 1
 
         self.vector_store.add(chunks)
         self.bm25_index.add(chunks)
+
+        return len(chunks)
 
     def search(self, query, k=5, candidates=20):
         """Return the k best (chunk, relevance_score) pairs, best first."""
@@ -48,6 +82,12 @@ class Retriever:
         retriever.vector_store = VectorStore.load(folder)
 
         retriever.bm25_index.add(retriever.vector_store.chunks)
+
+        # Continue chunk numbering after the highest saved id.
+        retriever.next_chunk_id = max(
+            (chunk.metadata["chunk"] for chunk in retriever.vector_store.chunks),
+            default=-1
+        ) + 1
 
         return retriever
 
