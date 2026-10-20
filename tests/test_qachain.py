@@ -4,10 +4,12 @@ from Loaders import Document
 from QAChain import (
     SYSTEM_PROMPT,
     answer,
-    format_context,
+    answer_with_sources,
     build_sources,
     extract_citations,
-    answer_with_sources,
+    format_context,
+    format_history,
+    rewrite_question,
     stream_answer,
 )
 
@@ -307,3 +309,100 @@ def test_stream_answer_is_lazy():
 
     assert second_event == ("token", "Paris [1].")
     assert len(calls) == 1
+
+
+# TODO M: test_format_history_labels_roles
+def test_format_history_labels_roles():
+    history = [("user", "Hi"), ("assistant", "Hello")]
+
+    assert format_history(history) == "User: Hi\nAssistant: Hello"
+
+
+# TODO N: test_format_history_keeps_only_recent_turns
+def test_format_history_keeps_only_recent_turns():
+    history = [
+        ("user", "Message 1"),
+        ("assistant", "Message 2"),
+        ("user", "Message 3"),
+        ("assistant", "Message 4"),
+        ("user", "Message 5"),
+        ("assistant", "Message 6"),
+        ("user", "Message 7"),
+        ("assistant", "Message 8"),
+        ("user", "Message 9"),
+        ("assistant", "Message 10"),
+    ]
+
+    result = format_history(history, max_turns=4)
+
+    assert "Message 3" not in result
+    assert "Message 10" in result
+    assert result.splitlines() == [
+        "User: Message 7",
+        "Assistant: Message 8",
+        "User: Message 9",
+        "Assistant: Message 10",
+    ]
+
+
+# TODO O: test_rewrite_without_history_skips_the_llm
+def test_rewrite_without_history_skips_the_llm():
+    llm, seen = make_fake_llm()
+
+    assert rewrite_question("q?", [], llm=llm) == "q?"
+    assert rewrite_question("q?", None, llm=llm) == "q?"
+    assert seen == []
+
+
+# TODO P: test_rewrite_calls_llm_and_strips_result
+def test_rewrite_calls_llm_and_strips_result():
+    llm, seen = make_fake_llm("  What do plants release?  ")
+
+    result = rewrite_question(
+        "and what do they release?",
+        [("user", "How do plants make energy?")],
+        llm=llm,
+    )
+
+    assert result == "What do plants release?"
+    assert "How do plants make energy?" in seen[0]
+
+
+# TODO Q: test_rewrite_falls_back_when_model_returns_nothing
+def test_rewrite_falls_back_when_model_returns_nothing():
+    llm, seen = make_fake_llm("   ")
+
+    question = "and what do they release?"
+
+    assert rewrite_question(
+        question,
+        [("user", "How do plants make energy?")],
+        llm=llm,
+    ) == question
+
+
+# TODO R: test_answer_searches_with_rewritten_question_but_answers_original
+def test_answer_searches_with_rewritten_question_but_answers_original():
+    class RecordingRetriever(FakeRetriever):
+        def __init__(self, results):
+            super().__init__(results)
+            self.queries = []
+
+        def search(self, query, k=5):
+            self.queries.append(query)
+            return super().search(query, k)
+
+    retriever = RecordingRetriever([])
+    llm, seen = make_fake_llm("What do plants release?")
+
+    answer_with_sources(
+        "and what do they release?",
+        retriever,
+        llm=llm,
+        history=[("user", "How do plants make energy?")],
+    )
+
+    assert retriever.queries == ["What do plants release?"]
+    assert "and what do they release?" in seen[-1]
+
+    

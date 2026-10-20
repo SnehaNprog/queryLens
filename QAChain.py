@@ -98,9 +98,11 @@ def extract_citations(text):
     return sorted(set(int(citation) for citation in citations))
 
 
-def answer_with_sources(question, retriever, llm=None, k=5):
+def answer_with_sources(question, retriever, llm=None, k=5, history=None):
     """Return the answer, retrieved sources, and cited passage numbers."""
-    results = retriever.search(question, k=k)
+    # Search with the rewritten question, but answer the original one.
+    search_query = rewrite_question(question, history, llm)
+    results = retriever.search(search_query, k=k)
 
     context = (
         format_context(results)
@@ -122,19 +124,22 @@ def answer_with_sources(question, retriever, llm=None, k=5):
     }
 
 
-def answer(question, retriever, llm=None, k=5):
+def answer(question, retriever, llm=None, k=5, history=None):
     """Return only the generated answer."""
     return answer_with_sources(
         question,
         retriever,
         llm=llm,
         k=k,
+        history=history,
     )["answer"]
 
 
-def stream_answer(question, retriever, llm=None, k=5):
+def stream_answer(question, retriever, llm=None, k=5, history=None):
     """Stream answer events: sources, tokens, then done."""
-    results = retriever.search(question, k=k)
+    # Search with the rewritten question, but answer the original one.
+    search_query = rewrite_question(question, history, llm)
+    results = retriever.search(search_query, k=k)
 
     context = (
         format_context(results)
@@ -166,3 +171,62 @@ def stream_answer(question, retriever, llm=None, k=5):
         },
     )
 
+
+
+# ---- Step 21b: conversation memory via query rewriting ----
+
+REWRITE_SYSTEM_PROMPT = """You are a question-rewriting assistant.
+
+Follow these rules strictly:
+
+1. Rewrite the user's follow-up question into a STANDALONE question.
+   Use the chat history to resolve references, pronouns, and missing context.
+2. Always preserve the SAME LANGUAGE as the follow-up question.
+   Do not translate it, even if the chat history uses another language.
+3. Output ONLY the rewritten question.
+   Do not include explanations, introductions, quotation marks, or labels.
+4. If the question is already standalone and does not need chat history,
+   return it unchanged.
+"""
+
+REWRITE_PROMPT = ChatPromptTemplate.from_messages(
+    [
+        ("system", REWRITE_SYSTEM_PROMPT),
+        ("human", "Chat history:\n{history}\n\nFollow-up question: {question}"),
+    ]
+)
+
+
+def format_history(history, max_turns=6):
+    """Turn [("user", text), ("assistant", text), ...] into a readable string.
+
+    Example output:
+        User: How do plants make energy?
+        Assistant: They use photosynthesis [1].
+    """
+    recent = history[-max_turns:]
+
+    lines = []
+
+    for role, text in recent:
+        lines.append(f"{role.capitalize()}: {text}")
+
+    return "\n".join(lines)
+
+
+def rewrite_question(question, history, llm=None):
+    """Make a follow-up question standalone so retrieval can find the right passages."""
+    # No history means nothing to resolve, so skip the LLM call.
+    if not history:
+        return question
+
+    chain = REWRITE_PROMPT | (llm or get_llm()) | StrOutputParser()
+
+    rewritten = chain.invoke({
+        "history": format_history(history),
+        "question": question,
+    })
+
+    rewritten = rewritten.strip()
+
+    return rewritten if rewritten else question
