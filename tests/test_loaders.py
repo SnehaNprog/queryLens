@@ -39,3 +39,11 @@ def test_webloader_removes_noise(monkeypatch):
     assert "bad()" not in docs[0].page_content
     assert docs[0].metadata["title"] == "Hi"
 
+
+
+def test_pdfloader_accepts_uploaded_file_object():
+    with open("data/sample.pdf", "rb") as upload:
+        docs = pdfloader(upload, source_name="up.pdf")
+
+    assert len(docs) == 2
+    assert docs[0].metadata["source"] == "up.pdf"

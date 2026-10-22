@@ -1,6 +1,9 @@
 from pathlib import Path
 
+import streamlit as st
 from streamlit.testing.v1 import AppTest
+
+from Loaders import Document
 
 APP_PATH = Path(__file__).resolve().parent.parent / "app.py"
 
@@ -55,3 +58,65 @@ def test_chat_history_survives_a_second_question():
     assert len(messages) == 4
     assert messages[0]["content"] == "What is AI?"
     assert messages[2]["content"] == "What is ML?"
+
+
+# ---- Step 23: wiring sources to the retriever ----
+# The real Retriever loads 2 GB models, so these tests use a fake one.
+
+class FakeRetriever:
+    def __init__(self):
+        self.added = []
+
+    def add(self, docs):
+        new = [d for d in docs if d.metadata["source"] not in self.sources()]
+        self.added.extend(new)
+        return len(new)
+
+    def sources(self):
+        return sorted({d.metadata["source"] for d in self.added})
+
+
+def run_app_with(monkeypatch, fake):
+    st.cache_resource.clear()  # forget any retriever cached by an earlier test
+    monkeypatch.setattr("Retriever.Retriever", lambda: fake)
+    monkeypatch.setattr(
+        "Loaders.webloader",
+        lambda url: [Document("Hello", {"source": url, "type": "web"})],
+    )
+    return run_app()
+
+
+def test_adding_a_webpage_indexes_it_and_lists_the_source(monkeypatch):
+    fake = FakeRetriever()
+    at = run_app_with(monkeypatch, fake)
+
+    at.text_input[0].set_value("http://x.test")
+    at.sidebar.button[0].click().run()
+
+    assert len(fake.added) == 1
+    assert "- http://x.test" in [m.value for m in at.sidebar.markdown]
+    assert len(at.sidebar.success) == 1
+
+
+def test_adding_same_page_twice_shows_info_not_success(monkeypatch):
+    fake = FakeRetriever()
+    at = run_app_with(monkeypatch, fake)
+
+    at.text_input[0].set_value("http://x.test")
+    at.sidebar.button[0].click().run()
+    at.sidebar.button[0].click().run()
+
+    assert len(fake.added) == 1
+    assert len(at.sidebar.success) == 0
+    assert "already loaded" in at.sidebar.info[0].value
+
+
+def test_empty_url_does_nothing(monkeypatch):
+    fake = FakeRetriever()
+    at = run_app_with(monkeypatch, fake)
+
+    at.sidebar.button[0].click().run()
+
+    assert fake.added == []
+    assert len(at.sidebar.success) == 0
+    assert len(at.sidebar.info) == 0

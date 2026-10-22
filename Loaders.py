@@ -15,11 +15,16 @@ class Document:
     metadata: dict = field(default_factory=dict)
 
 
-def pdfloader(path):
+def pdfloader(path, source_name=None):
     """Load a PDF as one Document per page, keeping the page number for citations."""
-    path = Path(path)
-    if not path.is_file():
-        raise FileNotFoundError(f"no such PDF: '{path}'")
+    if hasattr(path, "read"):
+        # An uploaded file object (e.g. from Streamlit): not a file on disk.
+        source = source_name or getattr(path, "name", "uploaded.pdf")
+    else:
+        path = Path(path)
+        if not path.is_file():
+            raise FileNotFoundError(f"no such PDF: '{path}'")
+        source = source_name or path.name
 
     reader = PdfReader(path)
     docs = []
@@ -29,7 +34,7 @@ def pdfloader(path):
             docs.append(
                 Document(
                     page_content=text,
-                    metadata={"source": path.name, "page": number, "type": "pdf"},
+                    metadata={"source": source, "page": number, "type": "pdf"},
                 )
             )
     return docs
