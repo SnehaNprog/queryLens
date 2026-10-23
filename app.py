@@ -1,6 +1,7 @@
 import streamlit as st
 
 from Loaders import pdfloader, webloader
+from QAChain import stream_answer
 from Retriever import Retriever
 
 st.set_page_config(page_title="QueryLens", page_icon="🧠", layout="wide")
@@ -66,34 +67,70 @@ with st.sidebar:
 
 # ---- Main area: chat ----
 
+
+def render_sources(sources, cited):
+    """Show the passages behind an answer: the cited ones first, then the rest."""
+    cited_sources = [s for s in sources if s["id"] in cited]
+    other_sources = [s for s in sources if s["id"] not in cited]
+
+    with st.expander(f"Sources ({len(cited_sources)} cited)"):
+        for s in cited_sources:
+            page = f", page {s['page']}" if s["page"] is not None else ""
+            st.markdown(f"**[{s['id']}] {s['source']}{page}**")
+            st.markdown(f"> {s['text']}")
+
+        if other_sources:
+            st.caption("Other retrieved passages")
+            for s in other_sources:
+                page = f", page {s['page']}" if s["page"] is not None else ""
+                st.caption(f"[{s['id']}] {s['source']}{page}: {s['text'][:200]}")
+
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
+# Streamlit re-runs this script on every interaction, so redraw the saved chat.
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
+        if message.get("sources"):
+            render_sources(message["sources"], message["cited"])
 
 question = st.chat_input("Ask a question about your sources...")
 
 if question:
-    # Store and display the user's message
-    st.session_state.messages.append({
-        "role": "user",
-        "content": question,
-    })
+    # History for follow-ups: everything said BEFORE this question.
+    history = [(m["role"], m["content"]) for m in st.session_state.messages]
 
+    st.session_state.messages.append({"role": "user", "content": question})
     with st.chat_message("user"):
         st.markdown(question)
 
-    # Temporary assistant placeholder
-    placeholder = "Answering comes in step 24."
+    if not retriever.sources():
+        notice = "Add a webpage or PDF in the sidebar first, then ask your question."
+        st.session_state.messages.append({"role": "assistant", "content": notice})
+        with st.chat_message("assistant"):
+            st.markdown(notice)
+    else:
+        captured = {"sources": [], "cited": []}
 
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": placeholder,
-    })
+        def answer_tokens():
+            """Yield answer text as it is generated; remember sources and citations."""
+            for kind, payload in stream_answer(question, retriever, history=history):
+                if kind == "sources":
+                    captured["sources"] = payload
+                elif kind == "token":
+                    yield payload
+                else:
+                    captured["cited"] = payload["cited"]
 
-    with st.chat_message("assistant"):
-        st.markdown(placeholder)
+        with st.chat_message("assistant"):
+            answer = st.write_stream(answer_tokens())
+            render_sources(captured["sources"], captured["cited"])
+
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer,
+            "sources": captured["sources"],
+            "cited": captured["cited"],
+        })
