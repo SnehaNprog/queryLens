@@ -1,5 +1,6 @@
 import streamlit as st
 
+from Errors import NoTextError, llm_error_message, source_error_message
 from Loaders import pdfloader, webloader
 from QAChain import stream_answer
 from Retriever import Retriever
@@ -33,26 +34,42 @@ with st.sidebar:
         add_url = st.button("Add webpage", use_container_width=True)
 
         if add_url and url.strip():
-            with st.spinner("Indexing webpage..."):
-                added = retriever.add(webloader(url.strip()))
-
-            if added > 0:
-                st.success(f"Added {added} chunks.")
+            try:
+                with st.spinner("Indexing webpage..."):
+                    docs = webloader(url.strip())
+                    if not any(doc.page_content.strip() for doc in docs):
+                        raise NoTextError(
+                            "That page has no readable text. It may need JavaScript to load."
+                        )
+                    added = retriever.add(docs)
+            except Exception as exc:
+                st.error(source_error_message(exc))
             else:
-                st.info("This page is already loaded.")
+                if added > 0:
+                    st.success(f"Added {added} chunks.")
+                else:
+                    st.info("This page is already loaded.")
 
     with pdf_tab:
         pdf_file = st.file_uploader("Upload a PDF", type="pdf")
         add_pdf = st.button("Add PDF", use_container_width=True)
 
         if add_pdf and pdf_file is not None:
-            with st.spinner("Indexing PDF..."):
-                added = retriever.add(pdfloader(pdf_file, source_name=pdf_file.name))
-
-            if added > 0:
-                st.success(f"Added {added} chunks.")
+            try:
+                with st.spinner("Indexing PDF..."):
+                    docs = pdfloader(pdf_file, source_name=pdf_file.name)
+                    if not docs:
+                        raise NoTextError(
+                            "No text found in that PDF. Scanned PDFs are images and need OCR."
+                        )
+                    added = retriever.add(docs)
+            except Exception as exc:
+                st.error(source_error_message(exc))
             else:
-                st.info("This PDF is already loaded.")
+                if added > 0:
+                    st.success(f"Added {added} chunks.")
+                else:
+                    st.info("This PDF is already loaded.")
 
     st.divider()
     st.subheader("Loaded sources")
@@ -100,7 +117,11 @@ question = st.chat_input("Ask a question about your sources...")
 
 if question:
     # History for follow-ups: everything said BEFORE this question.
-    history = [(m["role"], m["content"]) for m in st.session_state.messages]
+    history = [
+        (m["role"], m["content"])
+        for m in st.session_state.messages
+        if not m.get("error")  # failed attempts are not part of the conversation
+    ]
 
     st.session_state.messages.append({"role": "user", "content": question})
     with st.chat_message("user"):
@@ -125,12 +146,19 @@ if question:
                     captured["cited"] = payload["cited"]
 
         with st.chat_message("assistant"):
-            answer = st.write_stream(answer_tokens())
-            render_sources(captured["sources"], captured["cited"])
-
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": answer,
-            "sources": captured["sources"],
-            "cited": captured["cited"],
-        })
+            try:
+                answer = st.write_stream(answer_tokens())
+            except Exception as exc:
+                error_text = f"⚠️ {llm_error_message(exc)}"
+                st.error(error_text)
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": error_text, "error": True}
+                )
+            else:
+                render_sources(captured["sources"], captured["cited"])
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": answer,
+                    "sources": captured["sources"],
+                    "cited": captured["cited"],
+                })

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import requests
 import streamlit as st
 from streamlit.testing.v1 import AppTest
 
@@ -212,3 +213,63 @@ def test_old_answers_keep_their_sources_after_rerun(monkeypatch):
     at.chat_input[0].set_value("And its population?").run()
 
     assert len(at.expander) == 2
+
+
+# ---- Step 25: error handling ----
+
+def test_unreachable_page_shows_friendly_error(monkeypatch):
+    fake = FakeRetriever()
+    at = run_app_with(monkeypatch, fake)
+
+    def unreachable(url):
+        raise requests.exceptions.ConnectionError()
+
+    monkeypatch.setattr("Loaders.webloader", unreachable)
+    at.text_input[0].set_value("http://nowhere.test")
+    at.sidebar.button[0].click().run()
+
+    assert not at.exception
+    assert "Couldn't reach" in at.sidebar.error[0].value
+    assert fake.added == []
+    assert len(at.sidebar.success) == 0
+
+
+def test_page_without_text_shows_friendly_error(monkeypatch):
+    fake = FakeRetriever()
+    at = run_app_with(monkeypatch, fake)
+
+    monkeypatch.setattr(
+        "Loaders.webloader", lambda url: [Document("   ", {"source": url, "type": "web"})]
+    )
+    at.text_input[0].set_value("http://empty.test")
+    at.sidebar.button[0].click().run()
+
+    assert "no readable text" in at.sidebar.error[0].value
+    assert fake.added == []
+
+
+def test_model_failure_shows_error_and_keeps_the_conversation_clean(monkeypatch):
+    at, _ = run_chat_app(monkeypatch)
+    calls = []
+
+    def flaky_stream_answer(question, retriever, llm=None, k=5, history=None):
+        calls.append(history)
+        if len(calls) == 1:
+            raise RuntimeError("GROQ_API_KEY is not set. Add it to a .env file.")
+        yield ("sources", SOURCES)
+        yield ("token", "Paris.")
+        yield ("done", {"answer": "Paris.", "cited": [1]})
+
+    monkeypatch.setattr("QAChain.stream_answer", flaky_stream_answer)
+
+    at.chat_input[0].set_value("First question").run()
+
+    assert not at.exception
+    assert "GROQ_API_KEY is not set" in at.error[0].value
+    assert at.session_state.messages[-1]["error"] is True
+
+    at.chat_input[0].set_value("Second question").run()
+
+    # The failed attempt must not leak into the history sent to the model.
+    assert calls[1] == [("user", "First question")]
+    assert at.session_state.messages[-1]["content"] == "Paris."
