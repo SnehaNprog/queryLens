@@ -1,0 +1,261 @@
+[
+  {
+    "id": "q01",
+    "doc": "obs_en",
+    "lang": "en",
+    "question": "At what altitude is the Halvern Observatory located?",
+    "evidence": "2,840 metres"
+  },
+  {
+    "id": "q02",
+    "doc": "obs_en",
+    "lang": "hi",
+    "question": "हैल्वर्न वेधशाला की स्थापना किसने की थी?",
+    "evidence": "Edda Marsk"
+  },
+  {
+    "id": "q03",
+    "doc": "obs_en",
+    "lang": "es",
+    "question": "¿Cuánto cuesta la visita guiada al observatorio de Halvern?",
+    "evidence": "12 euros"
+  },
+  {
+    "id": "q04",
+    "doc": "obs_hi",
+    "lang": "en",
+    "question": "Who founded the Kiranpur Observatory?",
+    "evidence": "रेवती नायर"
+  },
+  {
+    "id": "q05",
+    "doc": "obs_hi",
+    "lang": "fr",
+    "question": "Quelle est la taille du télescope principal de l'observatoire de Kiranpur ?",
+    "evidence": "2.4 मीटर"
+  },
+  {
+    "id": "q06",
+    "doc": "obs_hi",
+    "lang": "de",
+    "question": "Wie viel kostet der Eintritt in die Sternwarte Kiranpur?",
+    "evidence": "150 रुपये"
+  },
+  {
+    "id": "q07",
+    "doc": "obs_es",
+    "lang": "en",
+    "question": "How many researchers work at the Montearena observatory?",
+    "evidence": "57 investigadores"
+  },
+  {
+    "id": "q08",
+    "doc": "obs_es",
+    "lang": "hi",
+    "question": "मोंटेअरेना वेधशाला के मुख्य दूरबीन के दर्पण का आकार कितना है?",
+    "evidence": "3,5 metros"
+  },
+  {
+    "id": "q09",
+    "doc": "obs_es",
+    "lang": "fr",
+    "question": "Quand l'observatoire de Montearena a-t-il été fondé ?",
+    "evidence": "1947"
+  },
+  {
+    "id": "q10",
+    "doc": "river_en",
+    "lang": "en",
+    "question": "How long is the River Tessal?",
+    "evidence": "412 kilometres"
+  },
+  {
+    "id": "q11",
+    "doc": "river_en",
+    "lang": "es",
+    "question": "¿Cuántos puentes cruzan el río Tessal?",
+    "evidence": "17 bridges"
+  },
+  {
+    "id": "q12",
+    "doc": "river_en",
+    "lang": "hi",
+    "question": "टेसाल नदी पर बना बाँध किस साल से बाढ़ को नियंत्रित कर रहा है?",
+    "evidence": "since 1976"
+  },
+  {
+    "id": "q13",
+    "doc": "river_fr",
+    "lang": "en",
+    "question": "Where does the Orvane river rise?",
+    "evidence": "massif des Aubrais"
+  },
+  {
+    "id": "q14",
+    "doc": "river_fr",
+    "lang": "de",
+    "question": "Wann wurde die älteste Brücke über den Orvane gebaut?",
+    "evidence": "construit en 1612"
+  },
+  {
+    "id": "q15",
+    "doc": "river_fr",
+    "lang": "hi",
+    "question": "ओरवेन नदी कितने किलोमीटर लंबी है?",
+    "evidence": "689 kilomètres"
+  },
+  {
+    "id": "q16",
+    "doc": "river_de",
+    "lang": "en",
+    "question": "How many water mills stand along the Weldmar?",
+    "evidence": "elf Wassermühlen"
+  },
+  {
+    "id": "q17",
+    "doc": "river_de",
+    "lang": "es",
+    "question": "¿Qué ocurrió cuando el río Weldmar se congeló en 1929?",
+    "evidence": "dreitägiges Fest"
+  },
+  {
+    "id": "q18",
+    "doc": "river_de",
+    "lang": "fr",
+    "question": "Dans quel lac se jette la Weldmar ?",
+    "evidence": "Karrsee"
+  },
+  {
+    "id": "q19",
+    "doc": "recipe_es",
+    "lang": "en",
+    "question": "How long do the beans soak for the mountain broth?",
+    "evidence": "ocho horas"
+  },
+  {
+    "id": "q20",
+    "doc": "recipe_es",
+    "lang": "hi",
+    "question": "सिएरा शोरबे में कितने ग्राम चोरिज़ो डाला जाता है?",
+    "evidence": "100 gramos de chorizo"
+  },
+  {
+    "id": "q21",
+    "doc": "recipe_es",
+    "lang": "de",
+    "question": "Wie viele Portionen ergibt die Suppe caldo de la sierra?",
+    "evidence": "seis raciones"
+  },
+  {
+    "id": "q22",
+    "doc": "recipe_hi",
+    "lang": "en",
+    "question": "How many whistles does the pressure cooker need for the sour lentils?",
+    "evidence": "तीन सीटी"
+  },
+  {
+    "id": "q23",
+    "doc": "recipe_hi",
+    "lang": "es",
+    "question": "¿Cuántos gramos de lentejas se necesitan para la dal agria?",
+    "evidence": "250 ग्राम"
+  },
+  {
+    "id": "q24",
+    "doc": "recipe_hi",
+    "lang": "fr",
+    "question": "Pour combien de personnes la recette de dal acide est-elle prévue ?",
+    "evidence": "चार लोगों"
+  },
+  {
+    "id": "q25",
+    "doc": "museum_fr",
+    "lang": "en",
+    "question": "How many clocks are on display at the Valmont clock museum?",
+    "evidence": "1 240 pièces"
+  },
+  {
+    "id": "q26",
+    "doc": "museum_fr",
+    "lang": "hi",
+    "question": "वालमोंट घड़ी संग्रहालय किस दिन बंद रहता है?",
+    "evidence": "fermé le mardi"
+  },
+  {
+    "id": "q27",
+    "doc": "museum_fr",
+    "lang": "es",
+    "question": "¿Cuántas personas visitan cada año el museo de relojes de Valmont?",
+    "evidence": "65 000 personnes"
+  },
+  {
+    "id": "q28",
+    "doc": "reactor_en",
+    "lang": "en",
+    "question": "How long does a refuelling shutdown of the Helion-3 reactor take?",
+    "evidence": "takes 21 days"
+  },
+  {
+    "id": "q29",
+    "doc": "reactor_en",
+    "lang": "hi",
+    "question": "हेलियन-3 रिएक्टर कितने मेगावाट तापीय ऊर्जा पैदा करता है?",
+    "evidence": "48 megawatts"
+  },
+  {
+    "id": "q30",
+    "doc": "reactor_en",
+    "lang": "de",
+    "question": "Wie viele Brennelemente enthält der Kern des Helion-3-Reaktors?",
+    "evidence": "214 fuel assemblies"
+  },
+  {
+    "id": "q31",
+    "doc": "errors_en",
+    "lang": "en",
+    "question": "What does error E-4471 mean on the Quillon X2?",
+    "evidence": "E-4471 means the WAN link is down"
+  },
+  {
+    "id": "q32",
+    "doc": "errors_en",
+    "lang": "en",
+    "question": "Which error code means the firmware update failed?",
+    "evidence": "E-6008 means the firmware update failed"
+  },
+  {
+    "id": "q33",
+    "doc": "errors_en",
+    "lang": "es",
+    "question": "¿Qué significa el error E-5130 del router Quillon?",
+    "evidence": "E-5130 indicates overheating"
+  },
+  {
+    "id": "q34",
+    "doc": "errors_en",
+    "lang": "hi",
+    "question": "E-7421 त्रुटि का क्या मतलब है?",
+    "evidence": "shorter than 8 characters"
+  },
+  {
+    "id": "q35",
+    "doc": "policy_de",
+    "lang": "en",
+    "question": "How many vacation days do employees at Brenner & Wolf get each year?",
+    "evidence": "28 Urlaubstage"
+  },
+  {
+    "id": "q36",
+    "doc": "policy_de",
+    "lang": "fr",
+    "question": "Jusqu'à quand les jours de congé non pris peuvent-ils être reportés ?",
+    "evidence": "31. März"
+  },
+  {
+    "id": "q37",
+    "doc": "policy_de",
+    "lang": "hi",
+    "question": "बीमार बच्चों की देखभाल के लिए कितने अतिरिक्त सवेतन दिन मिलते हैं?",
+    "evidence": "zehn bezahlte Tage"
+  }
+]
