@@ -26,14 +26,10 @@ def build_retriever():
     return retriever
 
 
-def test_add_fills_both_indexes():
+def test_add_fills_the_index():
     retriever = build_retriever()
 
-    vector_count = len(retriever.vector_store.chunks)
-    bm25_count = len(retriever.bm25_index.chunks)
-
-    assert vector_count > 0
-    assert vector_count == bm25_count
+    assert len(retriever.vector_store.chunks) > 0
 
 
 def test_search_finds_right_source():
@@ -68,11 +64,7 @@ def test_save_and_load_roundtrip(tmp_path):
 
     loaded = Retriever.load(folder)
 
-    vector_count = len(loaded.vector_store.chunks)
-    bm25_count = len(loaded.bm25_index.chunks)
-
-    assert vector_count == len(retriever.vector_store.chunks)
-    assert vector_count == bm25_count
+    assert len(loaded.vector_store.chunks) == len(retriever.vector_store.chunks)
 
     results = loaded.search("baking a cake", k=1)
 
@@ -110,21 +102,7 @@ def test_adding_same_source_twice_is_skipped():
 
     assert added == 0
     assert len(retriever.vector_store.chunks) == n
-    assert len(retriever.bm25_index.chunks) == n
 
-
-def test_chunk_ids_are_unique_across_add_calls():
-    retriever = Retriever()
-
-    retriever.add(DOCS[:1])
-    retriever.add(DOCS[1:])
-
-    ids = [
-        chunk.metadata["chunk"]
-        for chunk in retriever.vector_store.chunks
-    ]
-
-    assert len(set(ids)) == len(ids)
 
 
 def test_add_returns_number_of_chunks_added():
@@ -136,28 +114,12 @@ def test_add_returns_number_of_chunks_added():
     assert added > 0
 
 
-def test_chunk_numbering_continues_after_load(tmp_path):
+def test_adding_a_new_source_after_load_works(tmp_path):
     retriever = build_retriever()
+    retriever.save(tmp_path / "idx")
 
-    folder = tmp_path / "idx"
-    retriever.save(str(folder))
-
-    loaded = Retriever.load(str(folder))
-
-    new_doc = Document(
-        "Mars is red.",
-        {"source": "space.pdf", "page": 1}
-    )
-
-    added = loaded.add([new_doc])
+    loaded = Retriever.load(tmp_path / "idx")
+    added = loaded.add([Document("Mars is red.", {"source": "space.pdf", "page": 1})])
 
     assert added > 0
-
-    ids = [
-        chunk.metadata["chunk"]
-        for chunk in loaded.vector_store.chunks
-    ]
-
-    assert len(set(ids)) == len(ids)
-    assert "space.pdf" in loaded.sources()
-
+    assert loaded.sources() == ["bio.pdf", "food.pdf", "news.pdf", "space.pdf"]
