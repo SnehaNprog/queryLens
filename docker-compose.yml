@@ -1,0 +1,14 @@
+services:
+  querylens:
+    build: .
+    image: querylens
+    ports:
+      - "8501:8501"
+    env_file:
+      - path: .env
+        required: false  # without it the app still starts and explains the missing key
+    volumes:
+      - models:/models  # keeps the downloaded embedding and reranker weights between runs
+
+volumes:
+  models:

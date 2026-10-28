@@ -1,0 +1,20 @@
+# Secrets: pass the key at run time with --env-file, never bake it into the image
+.env
+
+# Local environment and caches
+.venv/
+.git/
+__pycache__/
+.pytest_cache/
+.cache/
+
+# Generated files
+output.txt
+faiss_index/
+*.faiss
+*.pkl
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
