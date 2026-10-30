@@ -1,0 +1,553 @@
+{
+  "created": "2026-11-01T14:23:41+00:00",
+  "embedding_model": "BAAI/bge-m3",
+  "reranker_model": "BAAI/bge-reranker-v2-m3",
+  "documents": 12,
+  "questions": 37,
+  "benchmark_chunks": 19,
+  "total_chunks": 19,
+  "distractors": false,
+  "distractor_urls": [],
+  "summary": {
+    "vector": {
+      "n": 37,
+      "hit@1": 0.8918918918918919,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr": 0.9414414414414415,
+      "median_ms": 25.72745899669826
+    },
+    "vector+rerank": {
+      "n": 37,
+      "hit@1": 0.972972972972973,
+      "hit@3": 1.0,
+      "hit@5": 1.0,
+      "mrr": 0.9864864864864865,
+      "median_ms": 879.8738748300821
+    }
+  },
+  "per_question": {
+    "vector": [
+      {
+        "id": "q01",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 25.008208118379116
+      },
+      {
+        "id": "q02",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 2,
+        "ms": 25.08741687051952
+      },
+      {
+        "id": "q03",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 3,
+        "ms": 26.94533416070044
+      },
+      {
+        "id": "q04",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 24.03470897115767
+      },
+      {
+        "id": "q05",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 27.112875133752823
+      },
+      {
+        "id": "q06",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 2,
+        "ms": 24.764874950051308
+      },
+      {
+        "id": "q07",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 25.937875034287572
+      },
+      {
+        "id": "q08",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 2,
+        "ms": 27.568875113502145
+      },
+      {
+        "id": "q09",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.830124901607633
+      },
+      {
+        "id": "q10",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 26.01633290760219
+      },
+      {
+        "id": "q11",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.400000089779496
+      },
+      {
+        "id": "q12",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 28.37029192596674
+      },
+      {
+        "id": "q13",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 25.622500106692314
+      },
+      {
+        "id": "q14",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 23.80812494084239
+      },
+      {
+        "id": "q15",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 24.85333289951086
+      },
+      {
+        "id": "q16",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 23.984249914065003
+      },
+      {
+        "id": "q17",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 27.945749927312136
+      },
+      {
+        "id": "q18",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 25.72745899669826
+      },
+      {
+        "id": "q19",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.132083032280207
+      },
+      {
+        "id": "q20",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.981832925230265
+      },
+      {
+        "id": "q21",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.819332968443632
+      },
+      {
+        "id": "q22",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 28.553124982863665
+      },
+      {
+        "id": "q23",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 27.842499781399965
+      },
+      {
+        "id": "q24",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 28.95504212938249
+      },
+      {
+        "id": "q25",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 27.761958073824644
+      },
+      {
+        "id": "q26",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 24.71945807337761
+      },
+      {
+        "id": "q27",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 26.352250017225742
+      },
+      {
+        "id": "q28",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 25.37679113447666
+      },
+      {
+        "id": "q29",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 25.457249954342842
+      },
+      {
+        "id": "q30",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 29.56583397462964
+      },
+      {
+        "id": "q31",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 24.639958050101995
+      },
+      {
+        "id": "q32",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 24.237249977886677
+      },
+      {
+        "id": "q33",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 23.29020807519555
+      },
+      {
+        "id": "q34",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 23.39120884425938
+      },
+      {
+        "id": "q35",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 24.379791924729943
+      },
+      {
+        "id": "q36",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 24.96108296327293
+      },
+      {
+        "id": "q37",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 25.65845800563693
+      }
+    ],
+    "vector+rerank": [
+      {
+        "id": "q01",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 986.3320000004023
+      },
+      {
+        "id": "q02",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 863.0122079048306
+      },
+      {
+        "id": "q03",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 880.79012488015
+      },
+      {
+        "id": "q04",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 845.8725409582257
+      },
+      {
+        "id": "q05",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 899.9128330033273
+      },
+      {
+        "id": "q06",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 862.225207965821
+      },
+      {
+        "id": "q07",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 859.667208045721
+      },
+      {
+        "id": "q08",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 2,
+        "ms": 934.6255001146346
+      },
+      {
+        "id": "q09",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 904.97783315368
+      },
+      {
+        "id": "q10",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 859.1432920657098
+      },
+      {
+        "id": "q11",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 869.3386670202017
+      },
+      {
+        "id": "q12",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 925.4372080322355
+      },
+      {
+        "id": "q13",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 871.0772499907762
+      },
+      {
+        "id": "q14",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 875.5352080333978
+      },
+      {
+        "id": "q15",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 869.1987921483815
+      },
+      {
+        "id": "q16",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 883.6801669094712
+      },
+      {
+        "id": "q17",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 882.399917114526
+      },
+      {
+        "id": "q18",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 848.4186669811606
+      },
+      {
+        "id": "q19",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 888.5664159897715
+      },
+      {
+        "id": "q20",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 907.9093330074102
+      },
+      {
+        "id": "q21",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 860.7381670735776
+      },
+      {
+        "id": "q22",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 885.6326669920236
+      },
+      {
+        "id": "q23",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 889.2974997870624
+      },
+      {
+        "id": "q24",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 878.2440829090774
+      },
+      {
+        "id": "q25",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 878.9975829422474
+      },
+      {
+        "id": "q26",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 861.5559590980411
+      },
+      {
+        "id": "q27",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 897.9030000045896
+      },
+      {
+        "id": "q28",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 897.660749964416
+      },
+      {
+        "id": "q29",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 880.588959204033
+      },
+      {
+        "id": "q30",
+        "lang": "de",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 879.8738748300821
+      },
+      {
+        "id": "q31",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 860.7710839714855
+      },
+      {
+        "id": "q32",
+        "lang": "en",
+        "cross_lingual": false,
+        "rank": 1,
+        "ms": 842.2607909888029
+      },
+      {
+        "id": "q33",
+        "lang": "es",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 861.7804169189185
+      },
+      {
+        "id": "q34",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 861.0758329741657
+      },
+      {
+        "id": "q35",
+        "lang": "en",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 880.2635420579463
+      },
+      {
+        "id": "q36",
+        "lang": "fr",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 914.0373340342194
+      },
+      {
+        "id": "q37",
+        "lang": "hi",
+        "cross_lingual": true,
+        "rank": 1,
+        "ms": 905.081459088251
+      }
+    ]
+  }
+}
