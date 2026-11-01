@@ -1,7 +1,7 @@
 import pytest
 
-from Chunker import chunk_documents
-from Loaders import Document
+from querylens.ingestion.chunker import chunk_documents
+from querylens.ingestion.loaders import Document
 
 
 def test_chunks_inherit_metadata():

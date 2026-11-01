@@ -1,5 +1,5 @@
-from Loaders import Document
-from Reranker import rerank
+from querylens.ingestion.loaders import Document
+from querylens.retrieval.reranker import rerank
 
 
 CANDIDATES = [

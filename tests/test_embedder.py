@@ -1,6 +1,6 @@
 import numpy as np
 
-from Embedder import embed_texts
+from querylens.retrieval.embedder import embed_texts
 
 
 def test_one_vector_per_text():

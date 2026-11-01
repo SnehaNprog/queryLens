@@ -1,5 +1,5 @@
-from Loaders import Document
-from VectorStore import VectorStore
+from querylens.ingestion.loaders import Document
+from querylens.retrieval.vector_store import VectorStore
 
 CHUNKS = [
     Document("Photosynthesis lets plants turn sunlight into chemical energy.", {"source": "bio.pdf", "page": 1}),

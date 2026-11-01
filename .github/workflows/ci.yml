@@ -32,7 +32,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: hf-models-${{ hashFiles('Embedder.py', 'Reranker.py') }}
+          key: hf-models-${{ hashFiles('querylens/retrieval/embedder.py', 'querylens/retrieval/reranker.py') }}
 
       - name: Run tests
         run: python -m pytest -q

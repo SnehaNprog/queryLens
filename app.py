@@ -1,9 +1,9 @@
 import streamlit as st
 
-from Errors import NoTextError, llm_error_message, source_error_message
-from Loaders import pdfloader, webloader
-from QAChain import stream_answer
-from Retriever import Retriever
+from querylens.errors import NoTextError, llm_error_message, source_error_message
+from querylens.ingestion.loaders import pdfloader, webloader
+from querylens.generation.qa_chain import stream_answer
+from querylens.retrieval.retriever import Retriever
 
 st.set_page_config(page_title="QueryLens", page_icon="🧠", layout="wide")
 

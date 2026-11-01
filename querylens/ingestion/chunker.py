@@ -1,4 +1,4 @@
-from Loaders import Document
+from querylens.ingestion.loaders import Document
 
 
 def chunk_documents(docs, chunk_size=500, overlap=100):

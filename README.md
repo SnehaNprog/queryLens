@@ -80,7 +80,7 @@ streamlit run app.py
 
 ## Evaluation
 
-`python evaluate.py` measures retrieval on a small multilingual benchmark in [eval/](eval/): 12 short fictional documents (English, Hindi, Spanish, French, German) and 37 questions in those five languages. **32 of the 37 questions are cross-lingual** (the question is in a different language than the document). A question counts as a hit when the retrieved chunk comes from the right document and contains the answer text.
+`python -m eval.evaluate` (run from the project root) measures retrieval on a small multilingual benchmark in [eval/](eval/): 12 short fictional documents (English, Hindi, Spanish, French, German) and 37 questions in those five languages. **32 of the 37 questions are cross-lingual** (the question is in a different language than the document). A question counts as a hit when the retrieved chunk comes from the right document and contains the answer text.
 
 | System | hit@1 | hit@3 | MRR | Median retrieval time |
 |---|---|---|---|---|
@@ -97,20 +97,26 @@ On the 32 cross-lingual questions alone: hit@1 rises from 0.88 to 0.97 with the 
 
 ```
 queryLens/
-├── app.py                 # Streamlit UI
-├── Loaders.py             # webloader, pdfloader
-├── Chunker.py             # split text into overlapping chunks
-├── Embedder.py            # bge-m3 embeddings
-├── VectorStore.py         # FAISS index (save/load supported)
-├── Reranker.py            # bge-reranker-v2-m3
-├── Retriever.py           # add sources, search + rerank
-├── LLM.py                 # Groq client
-├── QAChain.py             # prompts, citations, streaming, follow-up rewriting
-├── Errors.py              # friendly error messages
-├── evaluate.py            # retrieval benchmark runner
-├── eval/                  # benchmark documents, questions, saved results
-├── tests/                 # pytest suite (96 tests)
-├── data/                  # sample files
+├── app.py                         # Streamlit UI (entry point)
+├── querylens/                     # the application package
+│   ├── ingestion/
+│   │   ├── loaders.py             # webloader, pdfloader
+│   │   └── chunker.py             # split text into overlapping chunks
+│   ├── retrieval/
+│   │   ├── embedder.py            # bge-m3 embeddings
+│   │   ├── vector_store.py        # FAISS index (save/load supported)
+│   │   ├── reranker.py            # bge-reranker-v2-m3
+│   │   └── retriever.py           # add sources, search + rerank
+│   ├── generation/
+│   │   ├── llm.py                 # Groq client
+│   │   └── qa_chain.py            # prompts, citations, streaming, follow-up rewriting
+│   └── errors.py                  # friendly error messages
+├── eval/
+│   ├── evaluate.py                # retrieval benchmark runner
+│   ├── docs/, questions.json      # benchmark documents and questions
+│   └── results/latest.json        # saved results
+├── tests/                         # pytest suite (96 tests)
+├── data/                          # sample files
 ├── Dockerfile
 ├── docker-compose.yml
 └── .github/workflows/ci.yml

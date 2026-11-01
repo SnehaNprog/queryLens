@@ -1,5 +1,5 @@
-from Loaders import Document
-from Retriever import Retriever
+from querylens.ingestion.loaders import Document
+from querylens.retrieval.retriever import Retriever
 
 
 DOCS = [

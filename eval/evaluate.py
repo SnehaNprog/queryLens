@@ -7,10 +7,10 @@ Compares two retrieval systems on eval/questions.json:
 A question counts as a hit at rank r when the r-th retrieved chunk comes from the
 correct document AND contains the question's evidence string.
 
-Usage:
-    python evaluate.py
-    python evaluate.py --distractors
-    python evaluate.py --distractors --distractor-url https://en.wikipedia.org/wiki/Photosynthesis
+Usage (from the project root):
+    python -m eval.evaluate
+    python -m eval.evaluate --distractors
+    python -m eval.evaluate --distractors --distractor-url https://en.wikipedia.org/wiki/Photosynthesis
 """
 import argparse
 import json
@@ -19,13 +19,13 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-from Loaders import Document, pdfloader, webloader
-from Reranker import RERANKER_MODEL, rerank
-from Embedder import MODEL_NAME
-from Retriever import Retriever
+from querylens.ingestion.loaders import Document, pdfloader, webloader
+from querylens.retrieval.reranker import RERANKER_MODEL, rerank
+from querylens.retrieval.embedder import MODEL_NAME
+from querylens.retrieval.retriever import Retriever
 
-ROOT = Path(__file__).resolve().parent
-EVAL_DIR = ROOT / "eval"
+EVAL_DIR = Path(__file__).resolve().parent
+ROOT = EVAL_DIR.parent
 TOP_N = 10  # how many results each system returns per question
 CANDIDATES = 20  # shortlist size handed to the reranker
 

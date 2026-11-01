@@ -30,7 +30,7 @@ def rerank(query, results, top_k=5):
 
 
 if __name__ == "__main__":
-    from Loaders import Document
+    from querylens.ingestion.loaders import Document
 
     candidates = [
         (Document("Paris is the capital and largest city of France."), 0.0),

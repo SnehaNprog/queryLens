@@ -1,7 +1,7 @@
 from langchain_core.runnables import RunnableLambda
 
-from Loaders import Document
-from QAChain import (
+from querylens.ingestion.loaders import Document
+from querylens.generation.qa_chain import (
     SYSTEM_PROMPT,
     answer,
     answer_with_sources,

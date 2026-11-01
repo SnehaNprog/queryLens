@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 from streamlit.testing.v1 import AppTest
 
-from Loaders import Document
+from querylens.ingestion.loaders import Document
 
 APP_PATH = Path(__file__).resolve().parent.parent / "app.py"
 
@@ -79,9 +79,9 @@ class FakeRetriever:
 
 def run_app_with(monkeypatch, fake):
     st.cache_resource.clear()  # forget any retriever cached by an earlier test
-    monkeypatch.setattr("Retriever.Retriever", lambda: fake)
+    monkeypatch.setattr("querylens.retrieval.retriever.Retriever", lambda: fake)
     monkeypatch.setattr(
-        "Loaders.webloader",
+        "querylens.ingestion.loaders.webloader",
         lambda url: [Document("Hello", {"source": url, "type": "web"})],
     )
     return run_app()
@@ -156,8 +156,8 @@ def run_chat_app(monkeypatch, loaded_sources=("a.pdf",)):
         yield ("done", {"answer": "Paris is the capital [1].", "cited": [1]})
 
     st.cache_resource.clear()
-    monkeypatch.setattr("Retriever.Retriever", lambda: ChatRetriever(list(loaded_sources)))
-    monkeypatch.setattr("QAChain.stream_answer", fake_stream_answer)
+    monkeypatch.setattr("querylens.retrieval.retriever.Retriever", lambda: ChatRetriever(list(loaded_sources)))
+    monkeypatch.setattr("querylens.generation.qa_chain.stream_answer", fake_stream_answer)
     return run_app(), calls
 
 
@@ -224,7 +224,7 @@ def test_unreachable_page_shows_friendly_error(monkeypatch):
     def unreachable(url):
         raise requests.exceptions.ConnectionError()
 
-    monkeypatch.setattr("Loaders.webloader", unreachable)
+    monkeypatch.setattr("querylens.ingestion.loaders.webloader", unreachable)
     at.text_input[0].set_value("http://nowhere.test")
     at.sidebar.button[0].click().run()
 
@@ -239,7 +239,7 @@ def test_page_without_text_shows_friendly_error(monkeypatch):
     at = run_app_with(monkeypatch, fake)
 
     monkeypatch.setattr(
-        "Loaders.webloader", lambda url: [Document("   ", {"source": url, "type": "web"})]
+        "querylens.ingestion.loaders.webloader", lambda url: [Document("   ", {"source": url, "type": "web"})]
     )
     at.text_input[0].set_value("http://empty.test")
     at.sidebar.button[0].click().run()
@@ -260,7 +260,7 @@ def test_model_failure_shows_error_and_keeps_the_conversation_clean(monkeypatch)
         yield ("token", "Paris.")
         yield ("done", {"answer": "Paris.", "cited": [1]})
 
-    monkeypatch.setattr("QAChain.stream_answer", flaky_stream_answer)
+    monkeypatch.setattr("querylens.generation.qa_chain.stream_answer", flaky_stream_answer)
 
     at.chat_input[0].set_value("First question").run()
 

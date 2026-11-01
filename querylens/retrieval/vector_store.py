@@ -4,8 +4,8 @@ from pathlib import Path
 import faiss
 import numpy as np
 
-from Embedder import embed_texts
-from Loaders import Document
+from querylens.retrieval.embedder import embed_texts
+from querylens.ingestion.loaders import Document
 
 INDEX_FILE = "index.faiss"
 CHUNKS_FILE = "chunks.json"

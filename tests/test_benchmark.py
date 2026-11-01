@@ -2,8 +2,8 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from Chunker import chunk_documents
-from Loaders import Document
+from querylens.ingestion.chunker import chunk_documents
+from querylens.ingestion.loaders import Document
 
 EVAL_DIR = Path(__file__).resolve().parent.parent / "eval"
 

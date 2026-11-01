@@ -1,7 +1,7 @@
 import pytest
 
-from Loaders import Document
-from evaluate import first_hit_rank, summarize
+from querylens.ingestion.loaders import Document
+from eval.evaluate import first_hit_rank, summarize
 
 
 def result(source, text):

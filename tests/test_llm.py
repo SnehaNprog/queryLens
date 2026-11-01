@@ -1,6 +1,6 @@
 import pytest
 
-from LLM import DEFAULT_MODEL, get_llm
+from querylens.generation.llm import DEFAULT_MODEL, get_llm
 
 
 def test_missing_key_raises(monkeypatch):

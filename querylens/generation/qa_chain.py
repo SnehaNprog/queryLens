@@ -3,7 +3,7 @@ import re
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-from LLM import get_llm
+from querylens.generation.llm import get_llm
 import re
 
 

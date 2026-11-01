@@ -1,6 +1,6 @@
 import pytest
 
-from Loaders import pdfloader, webloader
+from querylens.ingestion.loaders import pdfloader, webloader
 
 
 class FakeResponse:
@@ -29,7 +29,7 @@ def test_pdfloader_metadata():
 
 def test_webloader_removes_noise(monkeypatch):
     monkeypatch.setattr(
-        "Loaders.requests.get",
+        "querylens.ingestion.loaders.requests.get",
         lambda *a, **k: FakeResponse()
     )
 

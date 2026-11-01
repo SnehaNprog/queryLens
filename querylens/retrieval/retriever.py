@@ -1,6 +1,6 @@
-from Chunker import chunk_documents
-from Reranker import rerank
-from VectorStore import VectorStore
+from querylens.ingestion.chunker import chunk_documents
+from querylens.retrieval.reranker import rerank
+from querylens.retrieval.vector_store import VectorStore
 
 
 class Retriever:

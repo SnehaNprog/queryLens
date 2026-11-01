@@ -4,7 +4,7 @@ import pytest
 import requests
 from pypdf.errors import PdfReadError
 
-from Errors import NoTextError, llm_error_message, source_error_message
+from querylens.errors import NoTextError, llm_error_message, source_error_message
 
 REQUEST = httpx.Request("POST", "https://api.groq.com/test")
 
